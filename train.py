@@ -12,7 +12,7 @@ SAVE_MODEL_PATH = "checkpoints/best_accuracy.pth"
 
 
 def train(opt):
-    device = torch.device("cuda:0" if opt.use_gpu and torch.cuda.is_available() else "cpu")
+    device = torch.device("cuda:0" if True and torch.cuda.is_available() else "cpu")
     print("device:", device)
 
     model = CNN().to(device)
