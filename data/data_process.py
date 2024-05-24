@@ -7,7 +7,7 @@ def segment(result,cntrs,saveToPath,name):
     tempImage=result.copy()
     for i,c in enumerate(cntrs):
         area = cv2.contourArea(c)
-        min_area_threshold = 500  # adjust this value based on your requirement
+        min_area_threshold = 500 
         if area > min_area_threshold:
             box = cv2.boundingRect(c)
             x,y,w,h = box
@@ -41,7 +41,7 @@ def main(path):
     import os
     from imutils import contours
     img=cv2.imread(path["images"])
-    # cropped=img[20:img.shape[0]-20,30:img.shape[1]-20]
+    cropped=img[20:img.shape[0]-20,30:img.shape[1]-20]
     cntrs=makeContours(img,(150,3))
     (cnts, _) = contours.sort_contours(cntrs, method="left-to-right")
     # clearPath(path["lines"])
@@ -62,14 +62,14 @@ def main(path):
         contours=makeContours(word,(1,2))
         resultWord=segment(word,contours,path["letter"],name)
     clearPath(path["letter"])
-    cv2.imshow("Line segmentation",result)#uncomment this for viewing the line segmentation
-    cv2.waitKey(0)
+    # cv2.imshow("Line segmentation",result)
+    # cv2.waitKey(0)
 
-path = {
-    "images": "data/test/digit_test.png",
-    "lines": "data/lines/",
-    "words": "data/words/",
-    "letter": "data/letter/"
-}
+# path = {
+#     "images": "data/test/digit_test.png",
+#     "lines": "data/lines/",
+#     "words": "data/words/",
+#     "letter": "data/letter/"
+# }
 
-main(path)
+# main(path)
