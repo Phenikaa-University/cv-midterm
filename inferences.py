@@ -14,9 +14,9 @@ class Predict():
 
 
     def __call__(self, img):
-        img = cv2.resize(img, (28, 28))  # resize to 28x28
+        img = cv2.resize(img, (28, 28))
         tensor = self.transform(img)
-        tensor = tensor.unsqueeze_(0)  # 1,1,28,28
+        tensor = tensor.unsqueeze_(0)  
 
         self.model.eval()
         with torch.no_grad():

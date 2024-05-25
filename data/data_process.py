@@ -1,5 +1,7 @@
 import cv2
 from imutils import contours
+import numpy as np
+
 
 
 def segment(result,cntrs,saveToPath,name):
@@ -12,7 +14,8 @@ def segment(result,cntrs,saveToPath,name):
             box = cv2.boundingRect(c)
             x,y,w,h = box
             temp=tempImage[y:y+h,x:x+w]
-            cv2.imwrite(os.path.join(saveToPath,name+f"{i}.png"),temp)
+            padded_digit = np.pad(temp, ((25,25),(25,25),(0,0)), "constant", constant_values=0)
+            cv2.imwrite(os.path.join(saveToPath,name+f"{i}.png"),padded_digit)
             cv2.rectangle(result, (x, y), (x+w, y+h), (0, 0, 255), 2)
     return result
 
@@ -65,11 +68,11 @@ def main(path):
     # cv2.imshow("Line segmentation",result)
     # cv2.waitKey(0)
 
-# path = {
-#     "images": "data/test/digit_test.png",
-#     "lines": "data/lines/",
-#     "words": "data/words/",
-#     "letter": "data/letter/"
-# }
+path = {
+    "images": "data/test/digit_test.png",
+    "lines": "data/lines/",
+    "words": "data/words/",
+    "letter": "data/letter/"
+}
 
-# main(path)
+main(path)
