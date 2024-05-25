@@ -7,6 +7,7 @@ import numpy as np
 def segment(result,cntrs,saveToPath,name):
     import os
     tempImage=result.copy()
+    list_of_digits=[]
     for i,c in enumerate(cntrs):
         area = cv2.contourArea(c)
         min_area_threshold = 500 
@@ -15,9 +16,10 @@ def segment(result,cntrs,saveToPath,name):
             x,y,w,h = box
             temp=tempImage[y:y+h,x:x+w]
             padded_digit = np.pad(temp, ((25,25),(25,25),(0,0)), "constant", constant_values=0)
-            cv2.imwrite(os.path.join(saveToPath,name+f"{i}.png"),padded_digit)
+            cv2.imwrite(os.path.join(saveToPath,name+f"{i+1}.png"),padded_digit)
             cv2.rectangle(result, (x, y), (x+w, y+h), (0, 0, 255), 2)
-    return result
+            list_of_digits.append(padded_digit)
+    return list_of_digits
 
 
 def makeContours(temp,kernalSize):
@@ -40,7 +42,7 @@ def clearPath(path):
             os.remove(filepath)
     return
 
-def main(path):
+def split_digit_from_img(path):
     import os
     from imutils import contours
     img=cv2.imread(path["images"])
@@ -49,30 +51,14 @@ def main(path):
     (cnts, _) = contours.sort_contours(cntrs, method="left-to-right")
     # clearPath(path["lines"])
     result=segment(img,cnts,path["lines"],"line")
-    # clearPath(path["words"])
-    count=0
-    for file in sorted(os.listdir(path["lines"])):
-        filePath=os.path.join(path["lines"],file)
-        line=cv2.imread(filePath)
-        name=f"line{count}word"
-        count+=1
-        contours=makeContours(line,(3,150))
-        resultLine=segment(line,contours,path["words"],name)
-    for file in os.listdir(path["words"]):
-        filePath=os.path.join(path["words"],file)
-        word=cv2.imread(filePath)
-        name=file.split('.')[0]+"letter"
-        contours=makeContours(word,(1,2))
-        resultWord=segment(word,contours,path["letter"],name)
-    clearPath(path["letter"])
-    # cv2.imshow("Line segmentation",result)
-    # cv2.waitKey(0)
+    return result
 
-path = {
-    "images": "data/test/digit_test.png",
-    "lines": "data/lines/",
-    "words": "data/words/",
-    "letter": "data/letter/"
-}
 
-main(path)
+# path = {
+#     "images": "data/test/digit_test.png",
+#     "lines": "data/lines/",
+#     "words": "data/words/",
+#     "letter": "data/letter/"
+# }
+
+# split_digit_from_img(path)
