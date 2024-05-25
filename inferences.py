@@ -2,6 +2,7 @@ import torch
 from model.model import CNN
 from torchvision import transforms
 import cv2
+from data.data_process import makeContours
 
 SAVE_MODEL_PATH = "checkpoints/best_accuracy.pth"
 
@@ -24,3 +25,4 @@ class Predict():
             preds = preds.detach().numpy()[0]
 
         return preds
+    
