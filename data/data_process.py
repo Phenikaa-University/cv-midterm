@@ -49,7 +49,6 @@ def split_digit_from_img(path):
     cropped=img[20:img.shape[0]-20,30:img.shape[1]-20]
     cntrs=makeContours(img,(150,3))
     (cnts, _) = contours.sort_contours(cntrs, method="left-to-right")
-    # clearPath(path["lines"])
     result=segment(img,cnts,path["lines"],"line")
     return result
 
