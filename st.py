@@ -4,6 +4,7 @@ import streamlit as st
 from PIL import Image
 import requests
 import cv2
+from streamlit_drawable_canvas import st_canvas
 
 from inferences import Predict
 from data.data_process import split_digit_from_img, makeContours
@@ -44,3 +45,22 @@ if image is not None:
             digit = int(res.argmax())
             numbers += str(digit)
         st.write(numbers)
+        
+st.header("Draw a digit below")
+canvas_result = st_canvas(
+    fill_color="rgba(0, 0, 0, 1)",  # Màu nền sẽ được vẽ
+    stroke_width=20,
+    stroke_color="white",
+    background_color="black",
+    height=150,width=150,
+    drawing_mode="freedraw",
+    key="canvas",
+)
+
+# Nếu có vẽ trên canvas
+if canvas_result.image_data is not None:
+    img = cv2.resize(canvas_result.image_data.astype('uint8'), (28, 28))
+    img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+    res = predict(img)
+    digit = int(res.argmax())
+    st.write(f"Predicted Digit: {digit}")
