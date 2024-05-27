@@ -1,6 +1,7 @@
 import cv2
 from imutils import contours
 import numpy as np
+import math
 
 
 
@@ -61,3 +62,34 @@ def split_digit_from_img(path):
 # }
 
 # split_digit_from_img(path)
+
+def image_refiner(gray):
+    org_size = 22
+    img_size = 28
+    rows,cols = gray.shape
+    
+    if rows > cols:
+        factor = org_size/rows
+        rows = org_size
+        cols = int(round(cols*factor))        
+    else:
+        factor = org_size/cols
+        cols = org_size
+        rows = int(round(rows*factor))
+    gray = cv2.resize(gray, (cols, rows))
+    
+    #get padding 
+    colsPadding = (int(math.ceil((img_size-cols)/2.0)),int(math.floor((img_size-cols)/2.0)))
+    rowsPadding = (int(math.ceil((img_size-rows)/2.0)),int(math.floor((img_size-rows)/2.0)))
+    
+    #apply padding 
+    gray = np.pad(gray, (rowsPadding, colsPadding), 'constant')
+    return gray
+
+def put_label(t_img,label,x,y):
+    font = cv2.FONT_HERSHEY_SIMPLEX
+    l_x = int(x) - 10
+    l_y = int(y) + 10
+    cv2.rectangle(t_img,(l_x,l_y+5),(l_x+35,l_y-35),(0,255,0),-1) 
+    cv2.putText(t_img,str(label),(l_x,l_y), font,1.5,(255,0,0),1,cv2.LINE_AA)
+    return t_img
