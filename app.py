@@ -45,7 +45,8 @@ def update_image(image: UploadFile):
 @app.post("/predict")
 def predict_image(image: UploadFile):
     # Get path from uploaded image
-    
+    pass
+
 
 if __name__ == "__main__":
     import uvicorn
