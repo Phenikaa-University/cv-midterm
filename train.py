@@ -5,10 +5,14 @@ import numpy as np
 import torch
 import torchvision
 from torchvision import transforms
+import matplotlib.pyplot as plt
+import wandb
 
 from model.model import CNN
 
 SAVE_MODEL_PATH = "checkpoints/best_accuracy.pth"
+
+
 
 
 def train(opt):
@@ -18,6 +22,15 @@ def train(opt):
     model = CNN().to(device)
     criterion = torch.nn.CrossEntropyLoss().to(device)
     optimizer = torch.optim.Adam(model.parameters(), lr=opt.lr)
+    
+    wandb.init(project="mnist_cnn", 
+           config={
+                "learning_rate": opt.lr,
+                "architecture": "CNN",
+                "dataset": "MNIST",
+                "epochs": opt.num_epoch,
+                }
+    )
 
     # data preparation
     transform = transforms.Compose([transforms.ToTensor(), transforms.Normalize((0.5,), (0.5,))])
@@ -28,6 +41,7 @@ def train(opt):
 
     # training epoch loop
     best_eval_acc = 0
+    avg_loss = []
     start = time.time()
     for ep in range(opt.num_epoch):
         avg_loss = 0
@@ -48,6 +62,7 @@ def train(opt):
 
             if i > 0 and i % 100 == 0:
                 print(f"loss:{avg_loss / 100:.4f}")
+                wandb.log({"loss": avg_loss / 100})
                 avg_loss = 0
 
         # validation
@@ -70,6 +85,7 @@ def train(opt):
                 torch.save(model.state_dict(), SAVE_MODEL_PATH)
 
         print(f"{ep + 1}/{opt.num_epoch} epoch finished. elapsed time:{time.time() - start:.1f} sec")
+    
 
     print(f"training finished. best eval acc:{best_eval_acc:.4f}")
 
@@ -85,6 +101,8 @@ if __name__ == "__main__":
     parser.add_argument("--use_gpu", action="store_true", help="use gpu if available")
     opt = parser.parse_args()
     print("args", opt)
+    
+    
 
     # set seed
     random.seed(opt.manual_seed)
