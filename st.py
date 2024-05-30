@@ -5,6 +5,7 @@ from PIL import Image
 import requests
 import cv2
 from streamlit_drawable_canvas import st_canvas
+import numpy as np
 
 from inferences import Predict
 from data.data_process import split_digit_from_img, makeContours
@@ -38,9 +39,11 @@ if image is not None:
         st.write("Predict result:")
         numbers = ""
         for img in results:
-            gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-            _, binary = cv2.threshold(gray, 150, 255, cv2.THRESH_BINARY_INV)
+            # gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+            _, binary = cv2.threshold(img, 150, 255, cv2.THRESH_BINARY_INV)
+            binary = np.pad(binary, (25, 25), "constant", constant_values=(0, 0))
             img = cv2.resize(binary, (28, 28))
+            cv2.imwrite("data/test/digittest.png", img)
             res = predict(img)
             digit = int(res.argmax())
             numbers += str(digit)
