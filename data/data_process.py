@@ -16,10 +16,10 @@ def segment(result,cntrs,saveToPath,name):
             box = cv2.boundingRect(c)
             x,y,w,h = box
             temp=tempImage[y:y+h,x:x+w]
-            padded_digit = np.pad(temp, ((25,25),(25,25),(0,0)), "constant", constant_values=0)
-            cv2.imwrite(os.path.join(saveToPath,name+f"{i+1}.png"),padded_digit)
+            temp=cv2.cvtColor(temp, cv2.COLOR_RGB2GRAY)
+            cv2.imwrite(os.path.join(saveToPath,name+f"{i+1}.png"),temp)
             cv2.rectangle(result, (x, y), (x+w, y+h), (0, 0, 255), 2)
-            list_of_digits.append(padded_digit)
+            list_of_digits.append(temp)
     return list_of_digits
 
 
@@ -47,7 +47,7 @@ def split_digit_from_img(path):
     import os
     from imutils import contours
     img=cv2.imread(path["images"])
-    cropped=img[20:img.shape[0]-20,30:img.shape[1]-20]
+    # cropped=img[20:img.shape[0]-20,30:img.shape[1]-20]
     cntrs=makeContours(img,(150,3))
     (cnts, _) = contours.sort_contours(cntrs, method="left-to-right")
     result=segment(img,cnts,path["lines"],"line")
